@@ -2,16 +2,16 @@
 
 
 ## Table of Contents
-1. [Introduction to RNA-seq (Experimental design)](#Introduction-to-RNA-seq-(Experimental-design)) 
-2. [Set up environment on High Performance Computing and the Genomic Compute Cluster](#Set_up_environment_on_High_Performance_Computing_and_the_Genomic_Compute_Cluster)
-3. [Quality Check/ Alignment/ Estimate transcript abundances of RNA-seq reads](#Quality_Check/_Alignment/_Estimate_transcript_abundances_of_RNA-seq_reads)
-4. [Expression and Differential Expression analysis](#Expression_and_Differential_Expression_analysis)
-5. [Visualization of the results](#Visualization_of_the_results)
+### 1. [Introduction to RNA-seq (Experimental design)](#Introduction-to-RNA-seq-(Experimental-design)) 
+### 2. [Set up environment on High Performance Computing and the Genomic Compute Cluster](#Set_up_environment_on_High_Performance_Computing_and_the_Genomic_Compute_Cluster)
+### 3. [Quality Check/ Alignment/ Estimate transcript abundances of RNA-seq reads](#Quality_Check/_Alignment/_Estimate_transcript_abundances_of_RNA-seq_reads)
+### 4. [Expression and Differential Expression analysis](#Expression_and_Differential_Expression_analysis)
+### 5. [Visualization of the results](#Visualization_of_the_results)
 * Appendix. Reference-free expression estimation (Kallisto) 
 
 ___
 
-1. [Introduction to RNA-seq (Experimental design)](#Introduction-to-RNA-seq-(Experimental-design))
+### 1. [Introduction to RNA-seq (Experimental design)](#Introduction-to-RNA-seq-(Experimental-design))
 
 There are several sequencing analysis methods available based on the **goal of your experiment**:
 *	_**RNA-seq** : co-expression networks, differentially expressed genes_
@@ -46,7 +46,7 @@ Before you start, you have to consider the **experiment design**:
 
 
 ___
-#### 2. [Set up environment on High Performance Computing and the Genomic Compute Cluster](#Set_up_environment_on_High_Performance_Computing_and_the_Genomic_Compute_Cluster)
+### 2. [Set up environment on High Performance Computing and the Genomic Compute Cluster](#Set_up_environment_on_High_Performance_Computing_and_the_Genomic_Compute_Cluster)
 
 If you would like to perform RNA-seq on Quest, you need to first do the followings:
 
@@ -100,10 +100,10 @@ If you would like to perform RNA-seq on Quest, you need to first do the followin
 
 
 ___
-3. [Quality Check/ Alignment/ Estimate transcript abundances of RNA-seq reads](#Quality_Check/_Alignment/_Estimate_transcript_abundances_of_RNA-seq_reads)
+### 3. [Quality Check/ Alignment/ Estimate transcript abundances of RNA-seq reads](#Quality_Check/_Alignment/_Estimate_transcript_abundances_of_RNA-seq_reads)
 ___
-4. [Expression and Differential Expression analysis](#Expression_and_Differential_Expression_analysis)
+### 4. [Expression and Differential Expression analysis](#Expression_and_Differential_Expression_analysis)
 ___
-5. [Visualization of the results](#Visualization_of_the_results)
+### 5. [Visualization of the results](#Visualization_of_the_results)
 ___
 
