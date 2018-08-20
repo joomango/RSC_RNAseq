@@ -3,20 +3,23 @@
 
 ## Table of Contents
 ### 1. Introduction to RNA-seq (Experimental design)
-### 2. [Set up environment on High Performance Computing and the Genomic Compute Cluster](#Set_up_environment_on_High_Performance_Computing_and_the_Genomic_Compute_Cluster)
-### 3. [Quality Check/ Alignment/ Estimate transcript abundances of RNA-seq reads](#Quality_Check/_Alignment/_Estimate_transcript_abundances_of_RNA-seq_reads)
-### 4. [Expression and Differential Expression analysis](#Expression_and_Differential_Expression_analysis)
-### 5. [Visualization of the results](#Visualization_of_the_results)
+### 2. Set up environment on High Performance Computing and the Genomic Compute Cluster 
+### 3. Quality Check/ Alignment/ Estimate transcript abundances of RNA-seq reads
+### 4. Expression and Differential Expression analysis
+### 5. Visualization of the results
 * Appendix. Reference-free expression estimation (Kallisto) 
 
 ___
 
-### 1. [Introduction to RNA-seq (Experimental design)](#Introduction-to-RNA-seq-(Experimental-design))
+### 1. Introduction to RNA-seq (Experimental design)
 
 There are several sequencing analysis methods available based on the **goal of your experiment**:
-*	_**RNA-seq** : co-expression networks, differentially expressed genes_
-*	_**Chip-Seq | ATAC-seq | DNase-seq** : Gene regulation dynamics, chromatin modeling_
-*	_**Whole-genome Seq** : Rare variant analysis_
+
+| Types of Sequencing Analysis | Notes |
+| :------------ | :-------------|
+|	_**RNA-seq**_ | _co-expression networks, differentially expressed genes_ |
+|	_**Chip-Seq \| ATAC-seq \| DNase-seq**_ | _Gene regulation dynamics, chromatin modeling_ |
+|	_**Whole-genome Seq**_ | _Rare variant analysis_ |
 
 **RNA-seq** could answer the following experimental questions:
 *	_Measure expression variation within or between species_
@@ -32,9 +35,10 @@ Before you start, you have to consider the **experiment design**:
 *	_Do you need controls?_
 *	_Do you need deep sequencing coverage?_
 
+**Types of RNA-seq reads**
 
-| Types of RNA-seq reads | Notes |
-| ------------ | -------------|
+| - | Notes |
+| :------------ | :-------------|
 | Single-end |* Fast run <br> * less expensive | 
 | Paired-end |* More data for each fragment/alignment/assembly <br> * good for isoform-detection <br> * Good for detecting structural variations |
               
@@ -46,7 +50,7 @@ Before you start, you have to consider the **experiment design**:
 
 
 ___
-### 2. [Set up environment on High Performance Computing and the Genomic Compute Cluster](#Set_up_environment_on_High_Performance_Computing_and_the_Genomic_Compute_Cluster)
+### 2. Set up environment on High Performance Computing and the Genomic Compute Cluster 
 
 If you would like to perform RNA-seq on Quest, you need to first do the followings:
 
@@ -100,10 +104,10 @@ If you would like to perform RNA-seq on Quest, you need to first do the followin
 
 
 ___
-### 3. [Quality Check/ Alignment/ Estimate transcript abundances of RNA-seq reads](#Quality_Check/_Alignment/_Estimate_transcript_abundances_of_RNA-seq_reads)
+### 3. Quality Check/ Alignment/ Estimate transcript abundances of RNA-seq reads
 ___
-### 4. [Expression and Differential Expression analysis](#Expression_and_Differential_Expression_analysis)
+### 4. Expression and Differential Expression analysis
 ___
-### 5. [Visualization of the results](#Visualization_of_the_results)
+### 5. Visualization of the results
 ___
 
