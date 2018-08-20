@@ -2,7 +2,7 @@
 
 
 ## Table of Contents
-### 1. [Introduction to RNA-seq (Experimental design)](#Introduction-to-RNA-seq-(Experimental-design)) 
+### 1. Introduction to RNA-seq (Experimental design)
 ### 2. [Set up environment on High Performance Computing and the Genomic Compute Cluster](#Set_up_environment_on_High_Performance_Computing_and_the_Genomic_Compute_Cluster)
 ### 3. [Quality Check/ Alignment/ Estimate transcript abundances of RNA-seq reads](#Quality_Check/_Alignment/_Estimate_transcript_abundances_of_RNA-seq_reads)
 ### 4. [Expression and Differential Expression analysis](#Expression_and_Differential_Expression_analysis)
