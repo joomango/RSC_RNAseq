@@ -164,8 +164,8 @@ This will perform the following:
 	-	(e.g.) `--sra-acc SRR353653,SRR353654`
 -	Parameter for QC: proportion of mapped read on either genome/transcriptome 
 	-	To confirm sequencing accuracy and contaminated DNA 
-		- If RNA-seq reads are mapped to human genome – 70~90% + a few multi-mapping reads 
-		- If RNA-seq reads are mapped to transcriptome – less mapping % + more multi-mapping reads by sharing same exon among isoforms 
+		- If RNA-seq reads are mapped to _human genome_ – 70~90% + a few multi-mapping reads 
+		- If RNA-seq reads are mapped to _transcriptome_ – less mapping % + more multi-mapping reads by sharing same exon among isoforms 
 	- If the result screen says that some reads aligned discordantly, it means some occurrences of infusion or translocation. Possibly mismatched/too-far paired-end reads. 
 -	_Other software options: **Picard, STAR, PSeQC, Qualimap**_
 
@@ -228,7 +228,23 @@ This will perform the following:
 
 ___
 ### 4. Expression and Differential Expression analysis
+
+
 ___
 ### 5. Visualization of the results
 ___
 
+### Resources for Further Study 
+
+- [RNA-seq wiki](https://github.com/griffithlab/rnaseq_tutorial/wiki)
+- [RNA-seq analysis tutorial with Differential analysis in R DESeq2 package](https://github.com/CandiceChuDVM/RNA-Seq/wiki/RNA-Seq-analysis-tutorial)
+
+##### Online courses
+- [Bioconductor for Genomic Data Science (Coursera)](https://www.coursera.org/learn/bioconductor)
+- [Command line tools for Genomic Data Science (Coursera)](https://www.coursera.org/learn/genomic-tools)
+- [Genomic Data Analysis (edX)](https://www.edx.org/xseries/genomics-data-analysis)
+
+##### Youtube lecture videos
+- [Informatics for RNA-seq analysis (5 videos)](https://www.youtube.com/playlist?list=PL3izGL6oi0S849u7OZbX85WTyBxVdcpqx)
+- [Introduction to RNA-sequencing (1hr 20mins)](https://youtu.be/Ji9nFCYl7Bk)
+- [RPKM, FPKM and TPM](https://youtu.be/TTUrtCY2k-w)
