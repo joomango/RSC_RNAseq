@@ -123,8 +123,7 @@ ___
 -	Our data are paired-ended, so we use ‘PE’ command for Trimmomatic.
 -	Trimmomatric removes adapter sequences, low quality reads, too-short reads, etc.
 -	Other software options: Trimmomatic, Fastx-toolkit (available on Quest)
--	FastX-toolkit [[Instruction link]](http://hannonlab.cshl.edu/fastx_toolkit/commandline.html)
--	FastX-toolkit does not accept gzip compressed files, so we would better make pipe and output in compressed format. The following command allows us to throw out any read that fails to meet a threshold of at least 70% of bases with Phred quality score > 20.
+-	FastX-toolkit [[Instruction link]](http://hannonlab.cshl.edu/fastx_toolkit/commandline.html) does not accept gzip compressed files, so we would better make pipe and output in compressed format. The following command allows us to throw out any read that fails to meet a threshold of at least 70% of bases with Phred quality score > 20.
 	- `gunzip -c ERR188044_chrX_1.fastq.gz | fastq_quality_filter -q 20 -p 70 -i -z -o ERR188044_chrX_1_filtered.fastq` 
 
 ```bash
@@ -149,9 +148,9 @@ This will perform the following:
 -	We have to confirm the read quality after filtering. 
 -	You can determine this easily by re-running FastQC on the output fastq files.
 	-	How many reads are left?
-•	Count the number of lines in a fastq file, which has 4 lines per entry:
-	-	$ wc -l output.fastq
-		- Divide this number by 4 to get the total number of reads in the fastq file.
+		-	Count the number of lines in a fastq file, which has 4 lines per entry:
+		-	`$ wc -l output.fastq`
+			- Divide this number by 4 to get the total number of reads in the fastq file.
 	-	What % of raw reads passed the quality filter?
 ```bash
 	fastqc --outdir ./qualitycheck/ *_chrX_*.fastq.gz
@@ -165,9 +164,9 @@ This will perform the following:
 	-	(e.g.) `--sra-acc SRR353653,SRR353654`
 -	Parameter for QC: proportion of mapped read on either genome/transcriptome 
 	-	To confirm sequencing accuracy and contaminated DNA 
-	- (ex) if RNA-seq reads are mapped to human genome – 70~90% + a few multi-mapping reads 
-	- (ex) if RNA-seq reads are mapped to transcriptome – less mapping % + more multi-mapping reads by sharing same exon among isoforms 
-	- (ex) If the result screen says that some reads aligned discordantly, it means some occurrences of infusion or translocation. Possibly mismatched/too-far paired-end reads. 
+		- If RNA-seq reads are mapped to human genome – 70~90% + a few multi-mapping reads 
+		- If RNA-seq reads are mapped to transcriptome – less mapping % + more multi-mapping reads by sharing same exon among isoforms 
+	- If the result screen says that some reads aligned discordantly, it means some occurrences of infusion or translocation. Possibly mismatched/too-far paired-end reads. 
 -	_Other software options: **Picard, STAR, PSeQC, Qualimap**_
 
 ```bash
@@ -198,7 +197,7 @@ This will perform the following:
 
 #### Step 6. Assemble and quantify expressed genes and transcripts with StringTie 
 
--	Stringtie assembles transcripts for each sample:
+- [ ]	(a) Stringtie assembles transcripts for each sample:
 ###### Input: BAM file + reference GTF file	:heavy_minus_sign:	Output: Assembled GTF file (1 per sample)
 ```bash
 	stringtie -p 2 -G ./genes/chrX.gtf -o ERR188044_chrX.gtf -l ERR188044 ERR188044_chrX.bam
@@ -209,15 +208,14 @@ This will perform the following:
 	stringtie -p 2 -G ./genes/chrX.gtf -o ERR204916_chrX.gtf -l ERR204916 ERR204916_chrX.bam
 ```
 
--	Stringtie merges transcripts from all samples:
+- [ ]	(b) Stringtie merges transcripts from all samples:
 ###### Input: multiple GTF files to be merged + mergelist.txt with filenames	:heavy_minus_sign:	Output: One merged GTF (will be used as a reference for relative comparisons among samples) 
 ```bash
 	stringtie --merge -p 2 -G ./genes/chrX.gtf -o stringtie_merged.gtf ./mergelist.txt
 ```
 
--	Stringtie estimates transcript abundances and create table counts for Ballgown:
+- [ ]	(c) Stringtie estimates transcript abundances and create table counts for Ballgown:
 ###### Input: BAM file of each sample + one merged GTF	:heavy_minus_sign:	Output: several output files for Ballgown-analysis ready 
--	_Other software available: **HTSeq-count, featureCounts**_ 
 ```bash
 	stringtie -e -B -p 2 -G stringtie_merged.gtf -o ./ballgown/ERR188044/ERR188044_chrX.gtf ERR188044_chrX.bam
 	stringtie -e -B -p 2 -G stringtie_merged.gtf -o ./ballgown/ERR188104/ERR188104_chrX.gtf ERR188104_chrX.bam
@@ -226,7 +224,7 @@ This will perform the following:
 	stringtie -e -B -p 2 -G stringtie_merged.gtf -o ./ballgown/ERR188454/ERR188454_chrX.gtf ERR188454_chrX.bam
 	stringtie -e -B -p 2 -G stringtie_merged.gtf -o ./ballgown/ERR204916/ERR204916_chrX.gtf ERR204916_chrX.bam
 ```
-
+-	_Other software available: **HTSeq-count, featureCounts**_
 
 ___
 ### 4. Expression and Differential Expression analysis
