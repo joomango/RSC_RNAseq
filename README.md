@@ -229,9 +229,209 @@ This will perform the following:
 ___
 ### 4. Expression and Differential Expression analysis
 
+To quantify expression of transcript/genes among different conditions:
+-	Count the number of mapped reads on each transcript  
+-	Quantify gene-level expression with GTF (gene transfer format) files. 
+
+###### Input: grouping info of the samples (csv file)	:heavy_minus_sign:	Output: SAM files (1 per sample)
+
+#### Step 7. Run  differential expression analysis with Ballgown
+
+- [ ]	(a) Load relevant R packages (ballgown, RSkittleBrewer, genefilter, dplyr, devtools)
+```R
+	module load R
+	R
+	
+	# R commands are indicated with '>' below:
+
+	>library("ballgown")
+	>library("RSkittleBrewer") # for color setup
+	>library("genefilter") # faster calculation of mean/variance
+	>library("dplyr") # to sort/arrange results
+	>library("devtools")  # reproducibility/installing packages
+```
+
+- [ ]	(b) Load phenotype data 
+	- In your future experiment, create your own phenotype data specifying the sample conditions you would like to compare. 
+	- Each sample information presents on each row of the file 
+```R
+	> pheno_data = read.csv("phenodata.csv")
+	> head(pheno_data)
+```
+
+- [ ]	(c) Read in the expression data that were calculated by Stringtie in previous step 6-(c)
+	-	IDs of the input files should be matched with the phenotype information. 
+	-	Ballgown also supports Cufflinks/RSEM data
+```R
+	> chrX <- ballgown(dataDir="ballgown", samplePattern="ERR", pData=pheno_data)
+	> str(chrX)
+```
+
+- [ ]	(e) Filter to remove low-abundance genes 
+	-	Genes often have very few or zero counts.
+	-	We can apply a variance filter for gene expression analysis. 
+```R
+	> chrX_filtered <- subset(chrX, "rowVars(texpr(chrX)) >1", genomesubset=TRUE)
+	> str(chrX_filtered)
+```
+
+
+#### Step 8. Identify transcripts/genes that show statistically significant differences between groups
+
+- [ ]	(a) Identify **transcripts** that show statistically significant differences between groups 
+```R
+	* We will look for transcripts that are differentially expressed between sexes, while correcting for any differences in expression due to the condition variable. 
+
+	> results_transcripts <- stattest(chrX_filtered, feature="transcript", covariate="sex", adjustvars=c("condition"), getFC=TRUE, meas="FPKM")
+	> head(results_transcripts)
+
+	* Add gene names and gene IDs to the results:
+
+	> results_transcripts <- data.frame(geneNames=ballgown::geneNames(chrX_filtered), geneIDs=ballgown::geneIDs(chrX_filtered), results_transcripts)
+	> head(results_transcripts)
+```
+
+- [ ] 	(b) Identify **genes** that show statistically significant differences between groups 
+```R
+	> results_genes <- stattest(chrX_filtered, feature="gene", covariate="sex", adjustvars=c("condition"), getFC=TRUE, meas="FPKM")
+	> head(results_genes)
+```
+
+
+-	Several **measurement criteria for RNA-seq quantification**:
+	-	**_RPKM (reads per kilobase of exon model per million reads)_** adjusts for feature length and library size by sample normalization 
+	-	**_FPKM (fragment per kilobase of exon model per million mapped reads)_** adjusts sample normalization of transcript expression (= similar to RPK) 
+		-	RPKM = FPKM (in Single-end sequencing) 
+		-	_FPKM can be translated to TPM_
+	-	**_TPM (transcript per million)_** is used for measuring RNA-seq gene expression by adjusting transcript differences with overall read # in library: useful in comparing inter-sample comparison with different origins/compositions 
+		-	Gene length is not important for inter-sample gene expression comparison, but important in ranking intra-sample gene expression 
+		-	All the measures above are not useful for the samples with transcript variances. 
+
+-	In differential expression analysis, we have to eliminate systematic effects that are not due to biological causal differences of interest. _(Normalization)_ We should condition the non-biological differences such as sequencing depth, gene’s length, and variability. Therefore we must calculate the fraction of the reads for each gene compared to the total amount of reads and to the whole RNA library. 
+-	Tests for significance must rely on assumptions about the underlying read distributions. The negative binomial distribution is often used for modeling gene expression between biological replicates, because it better accounts for noise than the Poisson distribution, which would otherwise be applicable as an approximation of the binomial distribution (presence of individual reads or not) with a large n (read library) and a small np. Another common assumption is that the majority of the transcriptome is unchanged between the two conditions. If these assumptions are not met by the data, the results will likely be incorrect. This is why it’s important to examine and perform QC on the expression data before running a differential expression analysis!
+-	It is highly recommended to have at least two replicates per group. 
+
+-	We can compare the transcripts that are differentially expressed between groups, while correcting for any different expression due to _**‘confounding’**_ variable. 
+	-	Ballgown can look at the confounder-adjusted fold change (FC) between the two groups by setting getFC=TRUE parameter in stattest() function. 
+
+-	_**For small sample size (n<4 per group)**_, it is often better to perform regularization than standard linear model-based comparison as Ballgown does. Like “limma-voom” package in Bioconductor, DESeq, edgeR for gene/exon counts are the mostly used ones. (not appropriate for FPKM abundance estimates) 
+
+-	_Other software options: **HTseq-count, DESeq2, edgeR, Kallisto, RSEM** (use expectation maximation to measure TPM value), **NURD** (Transcript expression measure in SE reads with low memory and computing cost), **Cufflinks** (using Tophat mapper for mapping, expectation-maximization algorithm)_
+
+#### Step 9. Explore the results! 
+```R
+	* Sort the results from the smallest-largest p-value
+	
+	> results_transcripts <- results_transcripts[order(results_transcripts$pval),]
+	> results_genes <- results_genes[order(results_genes$pval),]
+
+	* What are the top transcript/gene expressed differently between sexes? 
+
+	> head(results_transcripts)
+	> head(results_genes)
+
+	* (cf) You can also try filtering with q-value (<0.05) with subset() function.
+	* Save the analysis results to csv files:
+
+	> write.csv(results_transcripts, file="DifferentialExpressionAnalysis_transcript_results.csv", row.names=FALSE)
+	> write.csv(results_genes, file="DifferentialExpressionAnalysis_gene_results.csv", row.names=FALSE)
+	> save.image()			# your workspace will be saved as '.RData' in current working directory
+
+```
+
 
 ___
 ### 5. Visualization of the results
+
+#### Step 10. Choose your environment for Visualization
+You can choose to use either __**IGV or UCSC Genome browser**__ for visualizing your overall outcome. Not only for visualizing the expression differences, the step is also essential for checking additional quality control criteria such as PCR duplication caused by variant calling. In our examples, we will use R Ballgown package for RNA-seq analysis specific visualization.
+
+For small and moderately sized interactive analysis: 
+-	Go to Rstudio-Quest analytics node on your browser [[https://rstudio.questanalytics.northwestern.edu/auth-sign-in]](https://rstudio.questanalytics.northwestern.edu/auth-sign-in)
+-	You might have to re-install the required R packages for differential data analysis described above
+```R
+	> setwd("/YourWorkingDirectory/")
+	> load(".RData")
+```
+
+For large sized interactice analysis that might require over 4GB of RAM or more than 4+ cores:
+-	Request an interactive session on a compute node [[link]](https://kb.northwestern.edu/69247)
+```
+	msub -I -l nodes=1:ppn=4 -l walltime=01:00:00 -q genomics -A b1042
+```
+
+
+
+#### Step 11. 
+
+In our example script, we will explore:
+	-	**Boxplot – Distribution of gene abundances across samples**:
+		-	Variety of measurements can be compared and visualized other than FPKM values, such as splice junction, exon and gene in the dataset. 
+		-	Log transformation is required sometimes to plot some FPKM data = 0. 
+	-	**Boxplot – individual expression of a certain transcript between groups**. 
+	-	Plot the structure/expression levels in a sample of all transcripts that share the same gene locus.
+		-	We can plot their structure and expression levels by passing the gene name and the Ballgown object to the plotTranscripts function.
+	-	Plot average expression levels for all transcripts of a gene within different groups
+
+- [ ]	(a). Plot for distribution of gene abundances across samples:
+	- In this example, we compare the FPKM measurements for the transcripts colored by 'sex' varaible in phenotype file. 
+```R
+	> fpkm <- texpr(chrX, meas='FPKM')
+	> fpkm <- log2(fpkm +1)
+	> boxplot(fpkm, col=as.numeric(pheno_data$sex), las=2,ylab='log2(FPKM+1)')
+```
+
+- [ ]	11-2. Plot for individual expression of a certain transcript between groups: 
+```R
+	* Setup palette with your favorite colors
+
+	> coloring <- c('darkgreen', 'skyblue', 'hotpink', 'orange', 'lightyellow')
+	> palette(coloring)
+
+	* Choose your transcript of interest
+
+	*	In this example, by looking head(results_transcripts), I choose to draw the 5th most differientially expressed transcript. (gene name "XIST")
+	*	You can also decide the transcript/gene of your interest. If you want to draw 10th transcript in your dataset:
+	(ex) > ballgown::transcriptNames(chrX)[10]
+
+	> which(ballgown::geneNames(chrX)=="XIST")	
+	
+	*	Find the row number of the interested gene in dataset
+	# 1492 here 
+	
+	> ballgown::transcriptNames(bg_chrX)[1492]	# get the transcript name in the gene 
+	> plot(fpkm[1492,] ~ pheno_data$sex, border=c(1,2), main=paste(ballgown::geneNames(chrX)[1492], ' : ',ballgown::transcriptNames(chrX)[1492]), pch=19, xlab="sex", ylab='log2(FPKM+1)')
+	> points(fpkm[1492,] ~ jitter(as.numeric(pheno_data$sex)), col=as.numeric(pheno_data$sex))
+```
+-	The output plot shows the name of the transcript (NR_001564) and the name of the gene (XIST) that contains it. 
+	- 	Can you tell the exclusive expression of XIST in females? (c.f. In females, the XIST gene is expressed exclusively from the inactive X chromosome, and it is essential for the initiation and spread of X inactivation, which is an early developmental process that transcriptionally silences one of the pair of X chromosomes)
+
+- [ ]	11-3. Plot the structure/expression levels in a sample of all transcripts that share the same gene locus:
+```R
+	* We choose sample 'ERR204916' for plotting structure/expression level in the same genomic position. 
+	
+	> plotTranscripts(ballgown::geneIDs(chrX)[1429],chrX, main=c("Gene XIST in sample ERR204916"), sample=c("ERR204916"))
+```
+	- The output plot shows one transcript per row, colored by its FPKM level. 
+
+- [ ]	11-4. Plot the average expression levels for all transcripts of a gene within different groups:
+
+	- Using plotMeans() function, specify which gene to plot and which variable to group by. 
+```R
+	> geneIDs(chrX)[1492]
+		"MSTRG.501" 
+	> plotMeans('MSTRG.501', chrX_filtered, groupvar="sex", legend=FALSE)
+	> plotMeans(ballgown::geneIDs(bg_chrX)[1492], chrX, groupvar="sex", legend=FALSE)
+```
+###### Have fun playing! 
+
+
+_Other Software Options_:
+1.	_Read-level visualization software: **ReadXplorer, UCSC genome browser, integrative Genomics Viewer (IGV), Genome Maps, Savant**_ 
+2.	_Gene expression analysis software: **DESeq2, DEXseq **_
+3.	_**CummeRbound, Sashimi plot** (junction reads will be more intuitive and aesthetic), **SplicePlot** (can get sashimi, structure, hive plot for sQTL), **TraV** (integrates all the data analysis for visualization but cannot be used for huge genome)_
+
+
 ___
 
 ### Resources for Further Study 
