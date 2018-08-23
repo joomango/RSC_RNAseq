@@ -346,7 +346,7 @@ ___
 #### Step 10. Choose your environment for Visualization
 You can choose to use either __**IGV or UCSC Genome browser**__ for visualizing your overall outcome. Not only for visualizing the expression differences, the step is also essential for checking additional quality control criteria such as PCR duplication caused by variant calling. In our examples, we will use R Ballgown package for RNA-seq analysis specific visualization.
 
-For small and moderately sized interactive analysis: 
+#### :heavy_check_mark: _For small and moderately sized interactive analysis:_ 
 -	Go to Rstudio-Quest analytics node on your browser [[https://rstudio.questanalytics.northwestern.edu/auth-sign-in]](https://rstudio.questanalytics.northwestern.edu/auth-sign-in)
 -	You might have to re-install the required R packages for differential data analysis described above
 ```R
@@ -354,7 +354,7 @@ For small and moderately sized interactive analysis:
 	> load(".RData")
 ```
 
-For large sized interactice analysis that might require over 4GB of RAM or more than 4+ cores:
+#### :heavy_check_mark: _For large sized interactice analysis that might require over 4GB of RAM or more than 4+ cores:_
 -	Request an interactive session on a compute node [[link]](https://kb.northwestern.edu/69247)
 ```
 	msub -I -l nodes=1:ppn=4 -l walltime=01:00:00 -q genomics -A b1042
@@ -381,7 +381,7 @@ In our example script, we will explore:
 	> boxplot(fpkm, col=as.numeric(pheno_data$sex), las=2,ylab='log2(FPKM+1)')
 ```
 
-- [ ]	11-2. Plot for individual expression of a certain transcript between groups: 
+- [ ]	(b). Plot for individual expression of a certain transcript between groups: 
 ```R
 	* Setup palette with your favorite colors
 
@@ -406,15 +406,17 @@ In our example script, we will explore:
 -	The output plot shows the name of the transcript (NR_001564) and the name of the gene (XIST) that contains it. 
 	- 	Can you tell the exclusive expression of XIST in females? (c.f. In females, the XIST gene is expressed exclusively from the inactive X chromosome, and it is essential for the initiation and spread of X inactivation, which is an early developmental process that transcriptionally silences one of the pair of X chromosomes)
 
-- [ ]	11-3. Plot the structure/expression levels in a sample of all transcripts that share the same gene locus:
+- [ ]	(c). Plot the structure/expression levels in a sample of all transcripts that share the same gene locus:
 ```R
 	* We choose sample 'ERR204916' for plotting structure/expression level in the same genomic position. 
 	
 	> plotTranscripts(ballgown::geneIDs(chrX)[1429],chrX, main=c("Gene XIST in sample ERR204916"), sample=c("ERR204916"))
+	
+	* The output plot shows one transcript per row, colored by its FPKM level. 
 ```
-	- The output plot shows one transcript per row, colored by its FPKM level. 
 
-- [ ]	11-4. Plot the average expression levels for all transcripts of a gene within different groups:
+
+- [ ]	(d). Plot the average expression levels for all transcripts of a gene within different groups:
 
 	- Using plotMeans() function, specify which gene to plot and which variable to group by. 
 ```R
