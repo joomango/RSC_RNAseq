@@ -36,7 +36,8 @@ Before you start, you have to consider the **experiment design**:
 | - | Notes |
 | :------------ | :-------------|
 | Single-end |* Fast run <br> * less expensive | 
-| Paired-end |* More data for each fragment/alignment/assembly <br> * good for isoform-detection <br> * Good for detecting structural variations |
+| Paired-end |* More data for each fragment/alignment/assembly <br> * Good for isoform-detection <br> * Good for detecting structural variations |
+| Mate-Paried |* Longer pairs than paired-end <br> * Good for structural variation detection <br> * Allow sequencing over long repeats <br> * Require more input DNA data than any other library |
               
 
 * Sanger sequencing - fasta format (1 header followed by any number of sequences lines) 
