@@ -69,13 +69,13 @@ If you would like to perform RNA-seq on Quest, you need to first do the followin
 ```
 
 #### Software setup/installation:
-- [ ] Load the necessary modules on Quest: fastqc, trimmomatic, samtools, HISAT2
+- [ ] Load the necessary modules on Quest: fastqc, samtools, HISAT2
 ```bash
 	module load fastqc/0.11.5
-
 	module load hisat2/2.0.4  
 	module load samtools/1.6 
-	module load stringtie/1.3.4 ### HTseq 
+	module load stringtie/1.3.4 
+	* Confirm if trimmomatic is included in the copied working directory
 ```
 
 - [ ] Install Ballgown package on R 
@@ -166,11 +166,11 @@ This will perform the following:
 
 ```bash
 	hisat2 -p 2 --dta -x ./indexes/chrX_tran -1 ./ERR188044_chrX_1_paired_filtered.fastq.gz -2 ./ERR188044_chrX_2_paired_filtered.fastq.gz -S ERR188044_chrX.sam
-hisat2 -p 2 --dta -x ./indexes/chrX_tran -1 ./ERR188104_chrX_1_paired_filtered.fastq.gz -2 ./ERR188104_chrX_2_paired_filtered.fastq.gz -S ERR188104_chrX.sam
-hisat2 -p 2 --dta -x ./indexes/chrX_tran -1 ./ERR188234_chrX_1_paired_filtered.fastq.gz -2 ./ERR188234_chrX_2_paired_filtered.fastq.gz -S ERR188234_chrX.sam
-hisat2 -p 2 --dta -x ./indexes/chrX_tran -1 ./ERR188273_chrX_1_paired_filtered.fastq.gz -2 ./ERR188273_chrX_2_paired_filtered.fastq.gz -S ERR188273_chrX.sam
-hisat2 -p 2 --dta -x ./indexes/chrX_tran -1 ./ERR188454_chrX_1_paired_filtered.fastq.gz -2 ./ERR188454_chrX_2_paired_filtered.fastq.gz -S ERR188454_chrX.sam
-hisat2 -p 2 --dta -x ./indexes/chrX_tran -1 ./ERR204916_chrX_1_paired_filtered.fastq.gz -2 ./ERR204916_chrX_2_paired_filtered.fastq.gz -S ERR204916_chrX.sam
+	hisat2 -p 2 --dta -x ./indexes/chrX_tran -1 ./ERR188104_chrX_1_paired_filtered.fastq.gz -2 ./ERR188104_chrX_2_paired_filtered.fastq.gz -S ERR188104_chrX.sam
+	hisat2 -p 2 --dta -x ./indexes/chrX_tran -1 ./ERR188234_chrX_1_paired_filtered.fastq.gz -2 ./ERR188234_chrX_2_paired_filtered.fastq.gz -S ERR188234_chrX.sam
+	hisat2 -p 2 --dta -x ./indexes/chrX_tran -1 ./ERR188273_chrX_1_paired_filtered.fastq.gz -2 ./ERR188273_chrX_2_paired_filtered.fastq.gz -S ERR188273_chrX.sam
+	hisat2 -p 2 --dta -x ./indexes/chrX_tran -1 ./ERR188454_chrX_1_paired_filtered.fastq.gz -2 ./ERR188454_chrX_2_paired_filtered.fastq.gz -S ERR188454_chrX.sam
+	hisat2 -p 2 --dta -x ./indexes/chrX_tran -1 ./ERR204916_chrX_1_paired_filtered.fastq.gz -2 ./ERR204916_chrX_2_paired_filtered.fastq.gz -S ERR204916_chrX.sam
 
 * Confirm the QC parameters  
 ```
@@ -181,6 +181,7 @@ hisat2 -p 2 --dta -x ./indexes/chrX_tran -1 ./ERR204916_chrX_1_paired_filtered.f
 		- If RNA-seq reads are mapped to _transcriptome_ – less mapping % + more multi-mapping reads by sharing same exon among isoforms 
 	- If the result screen says that some reads aligned discordantly, it means some occurrences of infusion or translocation. Possibly mismatched/too-far paired-end reads. 
 -	_Other software options: **Picard, STAR, PSeQC, Qualimap**_
+
 
 
 
@@ -271,7 +272,7 @@ To quantify expression of transcript/genes among different conditions:
 	> str(chrX)
 ```
 
-- [ ]	(e) Filter to remove low-abundance genes 
+- [ ]	(d) Filter to remove low-abundance genes 
 	-	Genes often have very few or zero counts.
 	-	We can apply a variance filter for gene expression analysis. 
 ```R
