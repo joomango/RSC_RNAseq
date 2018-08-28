@@ -37,9 +37,7 @@ Before you start, you have to consider the **experiment design**:
 | :------------ | :-------------|
 | Single-end |* Fast run <br> * less expensive | 
 | Paired-end |* More data for each fragment/alignment/assembly <br> * Good for isoform-detection <br> * Good for detecting structural variations |
-| Mate-Paried |* Longer pairs than paired-end <br> * Good for structural variation detection <br> * Allow sequencing over long repeats <br> * Require more input DNA data than any other library |
               
-
 * Sanger sequencing - fasta format (1 header followed by any number of sequences lines) 
 * NGS sequencing - fastq (Repeated 4 lines) 
     * Note that there are two fastQ files per sample in paired-end sequencing (+ strand, - strand) 
@@ -54,7 +52,7 @@ If you would like to perform RNA-seq on Quest, you need to first do the followin
 - [ ]	1. Get an account on Quest
 - [ ]	2. Request access to the Genomic Cluster (project directory: b1042) on Quest [[link]](https://kb.northwestern.edu/page.php?id=78602) 
 - [ ]	3. Log in to Quest [[link]](http://www.it.northwestern.edu/research/user-services/quest/logon.html)
-- [ ]	4. In this protocol, we will run an example analysis with chromosome X data of Homo sapiens. (Ref: Nature Protocol 2016) 
+- [ ]	4. In this protocol, we will run an example analysis with chromosome X data of Homo sapiens. (Ref: [Nature Protocol 2016](https://www.nature.com/articles/nprot.2016.095)) 
     - All necessary data you need are available in the following directory: _**/QuestDownloadPath/**_
       -	`'samples'` directory contains paired-end RNA-seq reads for 6 samples, 3 male and 3 female subjects from YRI (Yoruba from Ibadan, Nigeria) population. 
       -	`‘indexes’` directory contains the indexes for chromosome X for HISAT2. 
@@ -74,7 +72,7 @@ If you would like to perform RNA-seq on Quest, you need to first do the followin
 - [ ] Load the necessary modules on Quest: fastqc, trimmomatic, samtools, HISAT2
 ```bash
 	module load fastqc/0.11.5
-	module load fastx_toolkit/0.0.14 ### trimmomatic 
+
 	module load hisat2/2.0.4  
 	module load samtools/1.6 
 	module load stringtie/1.3.4 ### HTseq 
@@ -93,11 +91,6 @@ If you would like to perform RNA-seq on Quest, you need to first do the followin
 	* Bioconductor version 3.0 or greater and R version 3.1 are required to run this protocol.
 ```
 
-- [ ] Install StringTie, gffcompare 
-    - [ ] To install StringTie, download the latest binary package from http://ccb.jhu.edu/software/stringtie, unpack the StringTie tarfile and cd to the unpacked directory.
-    - [ ] To install gffcompare, download the latest binary package from http://github.com/gpertea/gffcompare, and follow the instructions provided in the README.md file.
-
-
 
 ___
 ### 3. Quality Check/ Alignment/ Estimate transcript abundances of RNA-seq reads
@@ -113,46 +106,51 @@ ___
 * You can find software instruction by typing a commandline: fastqc -h 
 	
 	mkdir qualitycheck
-	fastqc --outdir ./qualitycheck/ *_chrX_*.fastq.gz
+	fastqc --outdir ./qualitycheck/ /projects/b1042/RCS/RNAseq/samples/*_chrX_*.fastq.gz
 ```
 
-#### Step2. Filtering raw reads with Trimmomatic
+#### Step2. Filter raw reads with Trimmomatic
 ###### Input: fastQ file before filtering	:heavy_minus_sign:	Output: fastQ file after filtering
 -	Even if our data looks fine, it is always a good idea to filter out low/poor quality reads. 
 -	Appropriate threshold should be determined by each experiment design or organism. 
--	Before running the filtering step, you need to clarify the sequencing method of your reads since the software commands are different. (single-ended or paired-ended?)
--	Our data are paired-ended, so we use ‘PE’ command for Trimmomatic.
--	Trimmomatric removes adapter sequences, low quality reads, too-short reads, etc.
--	Other software options: Trimmomatic, Fastx-toolkit (available on Quest)
--	FastX-toolkit [[Instruction link]](http://hannonlab.cshl.edu/fastx_toolkit/commandline.html) does not accept gzip compressed files, so we would better make pipe and output in compressed format. The following command allows us to throw out any read that fails to meet a threshold of at least 70% of bases with Phred quality score > 20.
-	- `gunzip -c ERR188044_chrX_1.fastq.gz | fastq_quality_filter -q 20 -p 70 -i -z -o ERR188044_chrX_1_filtered.fastq` 
+-	Before running the filtering step, you need to specify sequencing method of your reads since the software commands are different. (single-ended or paired-ended?)
+	-	Our data are paired-ended, so we use ‘PE’ command for Trimmomatic.
+	-	Trimmomatric removes adapter sequences, low quality reads, too-short reads, etc.
+	-	Options you can include in Trimmomatric commands: 
+		a. ILLUMINACLIP: Cut adapter and other illumina-specific sequences from the read.
+		b. SLIDINGWINDOW: Perform a sliding window trimming, cutting once the average quality within the window falls below a threshold.
+		c. LEADING: Cut bases off the start of a read, if below a threshold quality
+		d. TRAILING: Cut bases off the end of a read, if below a threshold quality
+		e. CROP: Cut the read to a specified length
+		f. HEADCROP: Cut the specified number of bases from the start of the read
+		g. MINLEN: Drop the read if it is below a specified length
+		h. TOPHRED33: Convert quality scores to Phred-33
+		i. TOPHRED64: Convert quality scores to Phred-64
+	-	It works with FASTQ (using phred + 33 or phred + 64 quality scores, depending on the Illumina pipeline used), either uncompressed or gzipp'ed FASTQ. Use of gzip format is determined based on the .gz extension.
+
+-	*Other software options: __[Trimmomatic](http://www.usadellab.org/cms/?page=trimmomatic), [Fastx-toolkit](http://hannonlab.cshl.edu/fastx_toolkit/commandline.html)__ (available on Quest)*
+-	Optional instruction - FastX-toolkit does not accept gzip compressed files, so we would better make pipe and output in compressed format. The following command allows us to throw out any read that fails to meet a threshold of at least 70% of bases with Phred quality score > 20.
+	- `module load fastx_toolkit/0.0.14` 
+	- `gunzip -c ./samples/ERR188273_chrX_1.fastq.gz | fastq_quality_filter -q 20 -p 70 -i -z -o ERR188273_chrX_1_fastqqc_filtered.fastq` 
 
 ```bash
 * Paired ended:
-	java -jar trimmomatic-0.35.jar PE -phred33 input_forward.fq.gz input_reverse.fq.gz output_forward_paired.fq.gz output_forward_unpaired.fq.gz output_reverse_paired.fq.gz output_reverse_unpaired.fq.gz ILLUMINACLIP:TruSeq3-PE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
-
-* Single ended:
-	java -jar trimmomatic-0.35.jar SE -phred33 input.fq.gz output.fq.gz ILLUMINACLIP:TruSeq3-SE:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36 
+	java -jar trimmomatic-0.33.jar PE -phred33 ./samples/ERR188273_chrX_1.fastq.gz ./samples/ERR188273_chrX_2.fastq.gz ./ERR188273_chrX_1_paired_filtered.fastq.gz ./ERR188273_chrX_1_unpaired_filtered.fastq.gz ./ERR188273_chrX_2_paired_filtered.fastq.gz ./ERR188273_chrX_2_unpaired_filtered.fastq.gz LEADING:3 TRAILING:3 SLIDINGWINDOW:70:20 MINLEN:30 
 
 This will perform the following:
-•	Remove adapters (ILLUMINACLIP:TruSeq3-PE.fa:2:30:10)
-•	Remove leading low quality or N bases (below quality 3) (LEADING:3)
-•	Remove trailing low quality or N bases (below quality 3) (TRAILING:3)
-•	Scan the read with a 4-base wide sliding window, cutting when the average quality per base drops below 15 (SLIDINGWINDOW:4:15)
-•	Drop reads below the 36 bases long (MINLEN:36)
+•	Remove leading low quality or N bases (below quality 3) (LEADING:15)
+•	Remove trailing low quality or N bases (below quality 3) (TRAILING:15)
+•	Scan the read with a 70-base wide sliding window, cutting when the average quality per base drops below 20 (SLIDINGWINDOW:70:20)
+•	Drop reads below the 30 bases long (MINLEN:30)
 •	Convert quality score to Phred-33 
 ```
 
-#### Step3. Re-analyzing quality of the filtered reads with FastQC
+#### Step3. Re-analyze the quality of filtered reads with FastQC
 ###### Input: filtered fastQ file	:heavy_minus_sign:	Output: zip/html file contains quality report for each read
 
 -	We have to confirm the read quality after filtering. 
--	You can determine this easily by re-running FastQC on the output fastq files.
-	-	How many reads are left?
-		-	Count the number of lines in a fastq file, which has 4 lines per entry:
-		-	`$ wc -l output.fastq`
-			- Divide this number by 4 to get the total number of reads in the fastq file.
-	-	What % of raw reads passed the quality filter?
+-	You can determine this easily by re-running FastQC on the output fastq files. 
+- 	We did not remove many, so this step could be optional. 
 ```bash
 	fastqc --outdir ./qualitycheck/ *_chrX_*.fastq.gz
 ```
