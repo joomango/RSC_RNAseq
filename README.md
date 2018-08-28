@@ -163,6 +163,18 @@ This will perform the following:
 -	Note that HISAT2 commands for paired(-1,-2) /unpaired (-U) reads are different. 
 -	HISAT2 also provides an option, called --sra-acc, to directly work with NCBI Sequence Read Archive (SRA) data over the internet. This eliminates the need to manually download SRA reads and convert them into fasta/fastq format, without much affecting the run time. 
 	-	(e.g.) `--sra-acc SRR353653,SRR353654`
+
+```bash
+	hisat2 -p 2 --dta -x ./indexes/chrX_tran -1 ./ERR188044_chrX_1_paired_filtered.fastq.gz -2 ./ERR188044_chrX_2_paired_filtered.fastq.gz -S ERR188044_chrX.sam
+hisat2 -p 2 --dta -x ./indexes/chrX_tran -1 ./ERR188104_chrX_1_paired_filtered.fastq.gz -2 ./ERR188104_chrX_2_paired_filtered.fastq.gz -S ERR188104_chrX.sam
+hisat2 -p 2 --dta -x ./indexes/chrX_tran -1 ./ERR188234_chrX_1_paired_filtered.fastq.gz -2 ./ERR188234_chrX_2_paired_filtered.fastq.gz -S ERR188234_chrX.sam
+hisat2 -p 2 --dta -x ./indexes/chrX_tran -1 ./ERR188273_chrX_1_paired_filtered.fastq.gz -2 ./ERR188273_chrX_2_paired_filtered.fastq.gz -S ERR188273_chrX.sam
+hisat2 -p 2 --dta -x ./indexes/chrX_tran -1 ./ERR188454_chrX_1_paired_filtered.fastq.gz -2 ./ERR188454_chrX_2_paired_filtered.fastq.gz -S ERR188454_chrX.sam
+hisat2 -p 2 --dta -x ./indexes/chrX_tran -1 ./ERR204916_chrX_1_paired_filtered.fastq.gz -2 ./ERR204916_chrX_2_paired_filtered.fastq.gz -S ERR204916_chrX.sam
+
+* Confirm the QC parameters  
+```
+
 -	Parameter for QC: proportion of mapped read on either genome/transcriptome 
 	-	To confirm sequencing accuracy and contaminated DNA 
 		- If RNA-seq reads are mapped to _human genome_ – 70~90% + a few multi-mapping reads 
@@ -170,16 +182,7 @@ This will perform the following:
 	- If the result screen says that some reads aligned discordantly, it means some occurrences of infusion or translocation. Possibly mismatched/too-far paired-end reads. 
 -	_Other software options: **Picard, STAR, PSeQC, Qualimap**_
 
-```bash
-	hisat2 -p 2 --dta -x ./indexes/chrX_tran -1 ./samples/ERR188044_chrX_1.fastq.gz -2 ./samples/ERR188044_chrX_2.fastq.gz -S ERR188044_chrX.sam
-	hisat2 -p 2 --dta -x ./indexes/chrX_tran -1 ./samples/ERR188104_chrX_1.fastq.gz -2 ./samples/ERR188104_chrX_2.fastq.gz -S ERR188104_chrX.sam
-	hisat2 -p 2 --dta -x ./indexes/chrX_tran -1 ./samples/ERR188234_chrX_1.fastq.gz -2 ./samples/ERR188234_chrX_2.fastq.gz -S ERR188234_chrX.sam
-	hisat2 -p 2 --dta -x ./indexes/chrX_tran -1 ./samples/ERR188273_chrX_1.fastq.gz -2 ./samples/ERR188273_chrX_2.fastq.gz -S ERR188273_chrX.sam
-	hisat2 -p 2 --dta -x ./indexes/chrX_tran -1 ./samples/ERR188454_chrX_1.fastq.gz -2 ./samples/ERR188454_chrX_2.fastq.gz -S ERR188454_chrX.sam
-	hisat2 -p 2 --dta -x ./indexes/chrX_tran -1 ./samples/ERR204916_chrX_1.fastq.gz -2 ./samples/ERR204916_chrX_2.fastq.gz -S ERR204916_chrX.sam
 
-* Confirm the QC parameters - % of alignment reads on genome? (e.g. last line in the result screen) 
-```
 
 #### Step 5. Sort and convert the SAM file to BAM 
 ###### Input: SAM file	:heavy_minus_sign:	Output: BAM file 
