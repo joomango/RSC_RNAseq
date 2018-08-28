@@ -117,21 +117,21 @@ ___
 	-	Our data are paired-ended, so we use ‘PE’ command for Trimmomatic.
 	-	Trimmomatric removes adapter sequences, low quality reads, too-short reads, etc.
 	-	Options you can include in Trimmomatric commands: 
-		a. ILLUMINACLIP: Cut adapter and other illumina-specific sequences from the read.
-		b. SLIDINGWINDOW: Perform a sliding window trimming, cutting once the average quality within the window falls below a threshold.
-		c. LEADING: Cut bases off the start of a read, if below a threshold quality
-		d. TRAILING: Cut bases off the end of a read, if below a threshold quality
-		e. CROP: Cut the read to a specified length
-		f. HEADCROP: Cut the specified number of bases from the start of the read
-		g. MINLEN: Drop the read if it is below a specified length
-		h. TOPHRED33: Convert quality scores to Phred-33
-		i. TOPHRED64: Convert quality scores to Phred-64
+		- a. ILLUMINACLIP: Cut adapter and other illumina-specific sequences from the read.
+		- b. SLIDINGWINDOW: Perform a sliding window trimming, cutting once the average quality within the window falls below a threshold.
+		- c. LEADING: Cut bases off the start of a read, if below a threshold quality
+		- d. TRAILING: Cut bases off the end of a read, if below a threshold quality
+		- e. CROP: Cut the read to a specified length
+		- f. HEADCROP: Cut the specified number of bases from the start of the read
+		- g. MINLEN: Drop the read if it is below a specified length
+		- h. TOPHRED33: Convert quality scores to Phred-33
+		- i. TOPHRED64: Convert quality scores to Phred-64
 	-	It works with FASTQ (using phred + 33 or phred + 64 quality scores, depending on the Illumina pipeline used), either uncompressed or gzipp'ed FASTQ. Use of gzip format is determined based on the .gz extension.
 
 -	*Other software options: __[Trimmomatic](http://www.usadellab.org/cms/?page=trimmomatic), [Fastx-toolkit](http://hannonlab.cshl.edu/fastx_toolkit/commandline.html)__ (available on Quest)*
 -	Optional instruction - FastX-toolkit does not accept gzip compressed files, so we would better make pipe and output in compressed format. The following command allows us to throw out any read that fails to meet a threshold of at least 70% of bases with Phred quality score > 20.
-	- `module load fastx_toolkit/0.0.14` 
-	- `gunzip -c ./samples/ERR188273_chrX_1.fastq.gz | fastq_quality_filter -q 20 -p 70 -i -z -o ERR188273_chrX_1_fastqqc_filtered.fastq` 
+		- `module load fastx_toolkit/0.0.14` 
+		- `gunzip -c ./samples/ERR188273_chrX_1.fastq.gz | fastq_quality_filter -q 20 -p 70 -i -z -o ERR188273_chrX_1_fastqqc_filtered.fastq` 
 
 ```bash
 * Paired ended:
