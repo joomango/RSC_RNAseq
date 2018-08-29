@@ -63,9 +63,9 @@ If you would like to perform RNA-seq on Quest, you need to first do the followin
         -	(cf) Our analysis only contains the genome of chromosome X, but if someone is interested in the full data sets, these files are ~25 times larger and you can find them: [ftp://ftp.ccb.jhu.edu/pub/RNAseq_protocol](ftp://ftp.ccb.jhu.edu/pub/RNAseq_protocol)
 - [ ]	5. Create a working directory for the analysis and copy the data to your directory: 
 ```bash
-	mkdir /YourWorkingDirectory/ 
-	cd /YourWorkingDirectory/ 
-	cp * /YourWorkingDirectory/ 
+	mkdir /home/YOUR_NETID/RNAseq_workshop		 
+	cd /home/YOUR_NETID/RNAseq_workshop
+	cp -R /projects/b1042/RCS/RNAseq/* .	
 ```
 
 #### Software setup/installation:
@@ -76,21 +76,6 @@ If you would like to perform RNA-seq on Quest, you need to first do the followin
 	module load samtools/1.6 
 	module load stringtie/1.3.4 
 	* Confirm if trimmomatic is included in the copied working directory
-```
-
-- [ ] Install Ballgown package on R 
-```bash
-	module load R
-	R 
-```
-```R
-	* R environment
-	
-	library("devtools") 
-	source("http://www.bioconductor.org/biocLite.R")
-	biocLite(c("alyssafrazee/RSkittleBrewer","ballgown", "genefilter","dplyr","devtools"))
-
-	* Bioconductor version 3.0 or greater and R version 3.1 are required to run this protocol.
 ```
 
 
@@ -108,7 +93,7 @@ ___
 * You can find software instruction by typing a commandline: fastqc -h 
 	
 	mkdir qualitycheck
-	fastqc --outdir ./qualitycheck/ /projects/b1042/RCS/RNAseq/samples/*_chrX_*.fastq.gz
+	fastqc --outdir ./qualitycheck/ ./samples/*_chrX_*.fastq.gz
 ```
 
 #### Step2. Filter raw reads with Trimmomatic
@@ -140,6 +125,11 @@ ___
 ```bash
 * Paired ended:
 	java -jar trimmomatic-0.33.jar PE -phred33 ./samples/ERR188273_chrX_1.fastq.gz ./samples/ERR188273_chrX_2.fastq.gz ./ERR188273_chrX_1_paired_filtered.fastq.gz ./ERR188273_chrX_1_unpaired_filtered.fastq.gz ./ERR188273_chrX_2_paired_filtered.fastq.gz ./ERR188273_chrX_2_unpaired_filtered.fastq.gz LEADING:3 TRAILING:3 SLIDINGWINDOW:70:20 MINLEN:30 
+	java -jar trimmomatic-0.33.jar PE -phred33 ./samples/ERR188044_chrX_1.fastq.gz ./samples/ERR188044_chrX_2.fastq.gz ./ERR188044_chrX_1_paired_filtered.fastq.gz ./ERR188044_chrX_1_unpaired_filtered.fastq.gz ./ERR188044_chrX_2_paired_filtered.fastq.gz ./ERR188044_chrX_2_unpaired_filtered.fastq.gz LEADING:3 TRAILING:3 SLIDINGWINDOW:70:20 MINLEN:30 
+	java -jar trimmomatic-0.33.jar PE -phred33 ./samples/ERR188104_chrX_1.fastq.gz ./samples/ERR188104_chrX_2.fastq.gz ./ERR188104_chrX_1_paired_filtered.fastq.gz ./ERR188104_chrX_1_unpaired_filtered.fastq.gz ./ERR188104_chrX_2_paired_filtered.fastq.gz ./ERR188104_chrX_2_unpaired_filtered.fastq.gz LEADING:3 TRAILING:3 SLIDINGWINDOW:70:20 MINLEN:30 
+	java -jar trimmomatic-0.33.jar PE -phred33 ./samples/ERR188234_chrX_1.fastq.gz ./samples/ERR188234_chrX_2.fastq.gz ./ERR188234_chrX_1_paired_filtered.fastq.gz ./ERR188234_chrX_1_unpaired_filtered.fastq.gz ./ERR188234_chrX_2_paired_filtered.fastq.gz ./ERR188234_chrX_2_unpaired_filtered.fastq.gz LEADING:3 TRAILING:3 SLIDINGWINDOW:70:20 MINLEN:30 
+	java -jar trimmomatic-0.33.jar PE -phred33 ./samples/ERR188454_chrX_1.fastq.gz ./samples/ERR188454_chrX_2.fastq.gz ./ERR188454_chrX_1_paired_filtered.fastq.gz ./ERR188454_chrX_1_unpaired_filtered.fastq.gz ./ERR188454_chrX_2_paired_filtered.fastq.gz ./ERR188454_chrX_2_unpaired_filtered.fastq.gz LEADING:3 TRAILING:3 SLIDINGWINDOW:70:20 MINLEN:30 
+	java -jar trimmomatic-0.33.jar PE -phred33 ./samples/ERR204916_chrX_1.fastq.gz ./samples/ERR204916_chrX_2.fastq.gz ./ERR204916_chrX_1_paired_filtered.fastq.gz ./ERR204916_chrX_1_unpaired_filtered.fastq.gz ./ERR204916_chrX_2_paired_filtered.fastq.gz ./ERR204916_chrX_2_unpaired_filtered.fastq.gz LEADING:3 TRAILING:3 SLIDINGWINDOW:70:20 MINLEN:30 
 
 This will perform the following:
 •	Remove leading low quality or N bases (below quality 3) (LEADING:15)
@@ -156,10 +146,10 @@ This will perform the following:
 -	You can determine this easily by re-running FastQC on the output fastq files. 
 - 	We did not remove many, so this step could be optional. 
 ```bash
-	fastqc --outdir ./qualitycheck/ *_chrX_*.fastq.gz
+	fastqc --outdir ./qualitycheck/filtered/ *_chrX_*_filtered.fastq.gz
 ```
 
-#### Step4. Alignment of RNA-seq reads to the genome 
+#### Step4. Alignment of RNA-seq reads to the genome with HISAT
 ###### Input: FastQ reads (2 per sample)	:heavy_minus_sign:	Output: SAM files (1 per sample)
 -	HISAT2 (v 2.1.0) maps the reads for each sample to the ref genome: [Help page: `hisat2 –h` ]
 -	Note that HISAT2 commands for paired(-1,-2) /unpaired (-U) reads are different. 
@@ -187,7 +177,7 @@ This will perform the following:
 
 
 
-#### Step 5. Sort and convert the SAM file to BAM 
+#### Step 5. Sort and convert the SAM file to BAM with samtools 
 ###### Input: SAM file	:heavy_minus_sign:	Output: BAM file 
 -	Samtools (v 2.1.0) sorts and converts the SAM file to BAM: [Help page: `samtools –help`]
 -	Both SAM/BAM formats represent alignments. BAM is more compressed format. Unmapped reads may also be in the BAM file. Reads that map to multiple location will show up multiple times as well.
@@ -218,7 +208,7 @@ This will perform the following:
 - [ ]	(b) Stringtie merges transcripts from all samples:
 ###### Input: multiple GTF files to be merged + mergelist.txt with filenames	:heavy_minus_sign:	Output: One merged GTF (will be used as a reference for relative comparisons among samples) 
 ```bash
-	stringtie --merge -p 2 -G ./genes/chrX.gtf -o stringtie_merged.gtf ./mergelist.txt
+	stringtie --merge -p 2 -G ./genes/chrX.gtf -o stringtie_merged.gtf mergelist.txt
 ```
 
 - [ ]	(c) Stringtie estimates transcript abundances and create table counts for Ballgown:
@@ -242,15 +232,19 @@ To quantify expression of transcript/genes among different conditions:
 
 ###### Input: grouping info of the samples (csv file)	:heavy_minus_sign:	Output: SAM files (1 per sample)
 
-#### Step 7. Run  differential expression analysis with Ballgown
+#### Step 7. Run differential expression analysis with Ballgown
 
-- [ ]	(a) Load relevant R packages (ballgown, RSkittleBrewer, genefilter, dplyr, devtools)
+- [ ]	(a) R Environment setup (Load/install R packages: ballgown, RSkittleBrewer, genefilter, dplyr, devtools)
 ```R
 	module load R
 	R
 	
 	# R commands are indicated with '>' below:
 
+	>library("devtools") 
+	>source("http://www.bioconductor.org/biocLite.R")
+	>biocLite(c("alyssafrazee/RSkittleBrewer","ballgown", "genefilter","dplyr","devtools"))
+	
 	>library("ballgown")
 	>library("RSkittleBrewer") # for color setup
 	>library("genefilter") # faster calculation of mean/variance
@@ -274,7 +268,7 @@ To quantify expression of transcript/genes among different conditions:
 	> str(chrX)
 ```
 
-- [ ]	(d) Filter to remove low-abundance genes 
+- [ ]	(d) Filter to remove low-abundance genes with a variance across samples less than one
 	-	Genes often have very few or zero counts.
 	-	We can apply a variance filter for gene expression analysis. 
 ```R
