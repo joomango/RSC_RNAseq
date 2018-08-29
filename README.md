@@ -393,16 +393,14 @@ In our example script, we will explore:
 
 	* Choose your transcript of interest
 
-	*	In this example, by looking head(results_transcripts), I choose to draw the 10th transcript in the dataset. (gene name "XIST") You can also decide the transcript/gene of your interest!
-	> ballgown::transcriptNames(chrX)[10]
-	> which(ballgown::geneNames(chrX)=="XIST")	
+	* In this example, by looking head(results_transcripts), I choose to draw the 13th transcript in the dataset. (gene name "XIST") You can also decide the transcript/gene of your interest!
+	> which(ballgown::geneNames(chrX)=="XIST")	# Find the row number of the interested transcript/gene in dataset: 1484 here 
+	> ballgown::transcriptNames(chrX)[1484]		# get the transcript name in the gene of interest: NR_001564
 	
-	*	Find the row number of the interested transcript/gene in dataset
-	# 1492 here 
-	
-	> ballgown::transcriptNames(bg_chrX)[1492]	# get the transcript name in the gene 
-	> plot(fpkm[1492,] ~ pheno_data$sex, border=c(1,2), main=paste(ballgown::geneNames(chrX)[1492], ' : ',ballgown::transcriptNames(chrX)[1492]), pch=19, xlab="sex", ylab='log2(FPKM+1)')
-	> points(fpkm[1492,] ~ jitter(as.numeric(pheno_data$sex)), col=as.numeric(pheno_data$sex))
+	* Draw the expression plot 
+	> plot(fpkm[1484,] ~ pheno_data$sex, border=c(1,2), main=paste(ballgown::geneNames(chrX)[1484], ' : ',ballgown::transcriptNames(chrX)[1484]), pch=19, xlab="sex", ylab='log2(FPKM+1)')
+	> points(fpkm[1484,] ~ jitter(as.numeric(pheno_data$sex)), col=as.numeric(pheno_data$sex))
+
 ```
 -	The output plot shows the name of the transcript (NR_001564) and the name of the gene (XIST) that contains it. 
 	- 	[Question] _Can you tell the exclusive expression of XIST in females? (c.f. In females, the XIST gene is expressed exclusively from the inactive X chromosome, and it is essential for the initiation and spread of X inactivation, which is an early developmental process that transcriptionally silences one of the pair of X chromosomes)_
@@ -411,7 +409,7 @@ In our example script, we will explore:
 ```R
 	* We choose sample 'ERR204916' for plotting structure/expression level in the same genomic position. 
 	
-	> plotTranscripts(ballgown::geneIDs(chrX)[1429],chrX, main=c("Gene XIST in sample ERR204916"), sample=c("ERR204916"))
+	> plotTranscripts(ballgown::geneIDs(chrX)[1484],chrX, main=c("Gene XIST in sample ERR204916"), sample=c("ERR204916"))
 	
 	* The output plot shows one transcript per row, colored by its FPKM level. 
 ```
@@ -421,10 +419,10 @@ In our example script, we will explore:
 
 	- Using plotMeans() function, specify which gene to plot and which variable to group by. 
 ```R
-	> geneIDs(chrX)[1492]
-		"MSTRG.501" 
-	> plotMeans('MSTRG.501', chrX_filtered, groupvar="sex", legend=FALSE)
-	> plotMeans(ballgown::geneIDs(bg_chrX)[1492], chrX, groupvar="sex", legend=FALSE)
+	> geneIDs(chrX)[1484]
+		"MSTRG.495" 
+	> plotMeans('MSTRG.495', chrX_filtered, groupvar="sex", legend=FALSE)
+	> plotMeans(ballgown::geneIDs(bg_chrX)[1484], chrX, groupvar="sex", legend=FALSE)
 ```
 ###### Have fun playing! 
 
