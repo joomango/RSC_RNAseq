@@ -84,6 +84,8 @@ If you would like to perform RNA-seq on Quest, you need to first do the followin
 	R 
 ```
 ```R
+	* R environment
+	
 	library("devtools") 
 	source("http://www.bioconductor.org/biocLite.R")
 	biocLite(c("alyssafrazee/RSkittleBrewer","ballgown", "genefilter","dplyr","devtools"))
@@ -312,14 +314,14 @@ To quantify expression of transcript/genes among different conditions:
 		-	Gene length is not important for inter-sample gene expression comparison, but important in ranking intra-sample gene expression 
 		-	All the measures above are not useful for the samples with transcript variances. 
 
--	In differential expression analysis, we have to eliminate systematic effects that are not due to biological causal differences of interest. _(Normalization)_ We should condition the non-biological differences such as sequencing depth, gene’s length, and variability. Therefore we must calculate the fraction of the reads for each gene compared to the total amount of reads and to the whole RNA library. 
--	Tests for significance must rely on assumptions about the underlying read distributions. The negative binomial distribution is often used for modeling gene expression between biological replicates, because it better accounts for noise than the Poisson distribution, which would otherwise be applicable as an approximation of the binomial distribution (presence of individual reads or not) with a large n (read library) and a small np. Another common assumption is that the majority of the transcriptome is unchanged between the two conditions. If these assumptions are not met by the data, the results will likely be incorrect. This is why it’s important to examine and perform QC on the expression data before running a differential expression analysis!
+-	In differential expression analysis, we have to eliminate systematic effects that are not due to biological causal differences of interest. _(Normalization)_ We should condition the non-biological differences such as _sequencing depth, gene’s length, and variability._ Therefore we must calculate the fraction of the reads for each gene compared to the total amount of reads and to the whole RNA library. 
+-	**Tests for significance** must rely on assumptions about the underlying read distributions. The _**negative binomial distribution**_ is often used for modeling gene expression between biological replicates, because it better accounts for noise than the **_Poisson distribution_**, which would otherwise be applicable as an approximation of the **_binomial distribution_** (presence of individual reads or not) with a large n (read library) and a small np. Another common assumption is that the majority of the transcriptome is unchanged between the two conditions. If these assumptions are not met by the data, the results will likely be incorrect. This is **_why it’s important to examine and perform QC on the expression data before running a differential expression analysis!_**
 -	It is highly recommended to have at least two replicates per group. 
 
 -	We can compare the transcripts that are differentially expressed between groups, while correcting for any different expression due to _**‘confounding’**_ variable. 
 	-	Ballgown can look at the confounder-adjusted fold change (FC) between the two groups by setting getFC=TRUE parameter in stattest() function. 
 
--	_**For small sample size (n<4 per group)**_, it is often better to perform regularization than standard linear model-based comparison as Ballgown does. Like “limma-voom” package in Bioconductor, DESeq, edgeR for gene/exon counts are the mostly used ones. (not appropriate for FPKM abundance estimates) 
+-	_**For small sample size (n<4 per group)**_, it is often better to perform _regularization_ than standard linear model-based comparison as Ballgown does. Like “limma-voom” package in Bioconductor, DESeq, edgeR for gene/exon counts are the mostly used ones. (not appropriate for FPKM abundance estimates) 
 
 -	_Other software options: **HTseq-count, DESeq2, edgeR, Kallisto, RSEM** (use expectation maximation to measure TPM value), **NURD** (Transcript expression measure in SE reads with low memory and computing cost), **Cufflinks** (using Tophat mapper for mapping, expectation-maximization algorithm)_
 
@@ -349,7 +351,7 @@ ___
 ### 5. Visualization of the results
 
 #### Step 10. Choose your environment for Visualization
-You can choose to use either __**IGV or UCSC Genome browser**__ for visualizing your overall outcome. Not only for visualizing the expression differences, the step is also essential for checking additional quality control criteria such as PCR duplication caused by variant calling. In our examples, we will use R Ballgown package for RNA-seq analysis specific visualization.
+Not only for visualizing the expression differences, the step is also essential for checking additional quality control criteria such as PCR duplication caused by variant calling. In our examples, we will use _**R Ballgown package**_ for RNA-seq analysis specific visualization.
 
 #### :heavy_check_mark: _For small and moderately sized interactive analysis:_ 
 -	Go to Rstudio-Quest analytics node on your browser [[https://rstudio.questanalytics.northwestern.edu/auth-sign-in]](https://rstudio.questanalytics.northwestern.edu/auth-sign-in)
@@ -364,22 +366,24 @@ You can choose to use either __**IGV or UCSC Genome browser**__ for visualizing 
 ```
 	msub -I -l nodes=1:ppn=4 -l walltime=01:00:00 -q genomics -A b1042
 ```
+	
+> You can choose to use either __**IGV or UCSC Genome browser**__ for visualizing your overall outcome. 
 
 
 
 #### Step 11. 
 
 In our example script, we will explore:
-	-	**Boxplot – Distribution of gene abundances across samples**:
-		-	Variety of measurements can be compared and visualized other than FPKM values, such as splice junction, exon and gene in the dataset. 
-		-	Log transformation is required sometimes to plot some FPKM data = 0. 
-	-	**Boxplot – individual expression of a certain transcript between groups**. 
-	-	Plot the structure/expression levels in a sample of all transcripts that share the same gene locus.
-		-	We can plot their structure and expression levels by passing the gene name and the Ballgown object to the plotTranscripts function.
-	-	Plot average expression levels for all transcripts of a gene within different groups
+-	**Boxplot to view the distribution of gene abundances across samples**:
+	-	Variety of measurements can be compared and visualized other than FPKM values, such as splice junction, exon and gene in the dataset. 
+	-	Log transformation is required sometimes to plot some FPKM data = 0. 
+-	**Boxplot to view an individual expression of a certain transcript between groups**. 
+-	Plot the structure/expression levels in a sample of all transcripts that share the same gene locus.
+	-	We can plot their structure and expression levels by passing the gene name and the Ballgown object to the plotTranscripts function.
+-	Plot average expression levels for all transcripts of a gene within different groups
 
 - [ ]	(a). Plot for distribution of gene abundances across samples:
-	- In this example, we compare the FPKM measurements for the transcripts colored by 'sex' varaible in phenotype file. 
+-	In this example, we compare the FPKM measurements for the transcripts colored by 'sex' variable in phenotype file. 
 ```R
 	> fpkm <- texpr(chrX, meas='FPKM')
 	> fpkm <- log2(fpkm +1)
@@ -395,13 +399,11 @@ In our example script, we will explore:
 
 	* Choose your transcript of interest
 
-	*	In this example, by looking head(results_transcripts), I choose to draw the 5th most differientially expressed transcript. (gene name "XIST")
-	*	You can also decide the transcript/gene of your interest. If you want to draw 10th transcript in your dataset:
-	(ex) > ballgown::transcriptNames(chrX)[10]
-
+	*	In this example, by looking head(results_transcripts), I choose to draw the 10th transcript in the dataset. (gene name "XIST") You can also decide the transcript/gene of your interest!
+	> ballgown::transcriptNames(chrX)[10]
 	> which(ballgown::geneNames(chrX)=="XIST")	
 	
-	*	Find the row number of the interested gene in dataset
+	*	Find the row number of the interested transcript/gene in dataset
 	# 1492 here 
 	
 	> ballgown::transcriptNames(bg_chrX)[1492]	# get the transcript name in the gene 
@@ -409,7 +411,7 @@ In our example script, we will explore:
 	> points(fpkm[1492,] ~ jitter(as.numeric(pheno_data$sex)), col=as.numeric(pheno_data$sex))
 ```
 -	The output plot shows the name of the transcript (NR_001564) and the name of the gene (XIST) that contains it. 
-	- 	Can you tell the exclusive expression of XIST in females? (c.f. In females, the XIST gene is expressed exclusively from the inactive X chromosome, and it is essential for the initiation and spread of X inactivation, which is an early developmental process that transcriptionally silences one of the pair of X chromosomes)
+	- 	[Question] _Can you tell the exclusive expression of XIST in females? (c.f. In females, the XIST gene is expressed exclusively from the inactive X chromosome, and it is essential for the initiation and spread of X inactivation, which is an early developmental process that transcriptionally silences one of the pair of X chromosomes)_
 
 - [ ]	(c). Plot the structure/expression levels in a sample of all transcripts that share the same gene locus:
 ```R
